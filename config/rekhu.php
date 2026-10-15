@@ -1,9 +1,9 @@
 <?php
 
-// T-Builder for Laravel. Everything here can be set from .env; `php artisan rekhu:install` writes the first three.
+// Rekhu Builder for Laravel. Everything here can be set from .env; `php artisan rekhu:install` writes the first three.
 return [
 
-    // The site key from the Rekhu account (Products → T-Builder for Laravel → Add app). One key per environment.
+    // The site key from the Rekhu account (Projects → New project → Laravel app; the key is on its Connection tab). One key per environment.
     'key' => env('REKHU_KEY'),
 
     // The secret the platform signs its calls with. Made by rekhu:install; never shared with anyone but the platform.

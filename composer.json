@@ -1,6 +1,6 @@
 {
     "name": "rekhu/laravel-dev",
-    "description": "T-Builder for Laravel: connects a Laravel app to its agent in a Rekhu account. It reads the running app, fixes errors on a git branch with tests, and watches the live site.",
+    "description": "Rekhu Builder for Laravel: connects a Laravel app to its agent in a Rekhu account. It reads the running app, fixes errors on a git branch with tests, and watches the live site.",
     "keywords": ["laravel", "ai", "agent", "rekhu", "t-builder", "debugging", "monitoring"],
     "homepage": "https://rekhu.com/products",
     "type": "library",

@@ -17,8 +17,8 @@ class InstallCommand extends Command
     public function handle(): int
     {
         $this->line('');
-        $this->line('  <fg=magenta>rekhu</> · T-Builder for Laravel '.Rekhu::VERSION);
-        $this->line('  Make a key in your account: Products → T-Builder for Laravel → Add app.');
+        $this->line('  <fg=magenta>rekhu</> · Rekhu Builder for Laravel '.Rekhu::VERSION);
+        $this->line('  Make a key in your account: Projects → New project → Laravel app; it shows on the Connection tab.');
         $this->line('');
         $key = trim((string) ($this->option('key') ?: $this->secret('Site key (agk_…)')));
         if (! preg_match('/^agk_([a-z0-9-]+)_([a-z0-9-]+)_[A-Za-z0-9_-]+$/', $key)) {

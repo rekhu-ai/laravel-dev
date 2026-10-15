@@ -1,4 +1,4 @@
-# T-Builder for Laravel
+# Rekhu Builder for Laravel
 
 The agent that knows your running Laravel app. Install this package, add the key from your
 [Rekhu](https://rekhu.com) account, and the agent there reads the app as it runs, fixes what breaks on a
@@ -14,7 +14,7 @@ Laravel 11, 12 or 13, PHP 8.2 or newer.
 
 ```bash
 composer require rekhu/laravel-dev
-php artisan rekhu:install          # asks for the site key from Products → T-Builder for Laravel → Add app
+php artisan rekhu:install          # asks for the key from Projects → New project → Laravel app (Connection tab)
 php artisan rekhu:status
 ```
 

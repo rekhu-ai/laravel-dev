@@ -1,4 +1,4 @@
-T-Builder for Laravel by Rekhu (Charisma Design, the Netherlands)
+Rekhu Builder for Laravel by Rekhu (Charisma Design, the Netherlands)
 
 This software is licensed, not sold. It is provided to holders of a Rekhu account under the
 Rekhu Terms of Service at https://rekhu.com/terms, which grant a limited, revocable,
