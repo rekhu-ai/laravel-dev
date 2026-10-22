@@ -12,7 +12,8 @@ class Guard
 {
     private const ALWAYS_HIDDEN = ['.env', '.env.*', 'auth.json', '*.pem', '*.key', 'storage/oauth-*.key', '.git/*', '.git'];
 
-    private const NEVER_WRITTEN = ['vendor', 'storage', 'node_modules', '.git', 'public/build', 'packages/rekhu'];
+    // config/rekhu.php holds the agent's own connection and safety settings: it may read them, never change them
+    private const NEVER_WRITTEN = ['vendor', 'storage', 'node_modules', '.git', 'public/build', 'packages/rekhu', 'config/rekhu.php'];
 
     /** The absolute path for a path inside the app, refusing anything outside it or hidden. */
     public static function path(string $relative, bool $mustExist = true): string

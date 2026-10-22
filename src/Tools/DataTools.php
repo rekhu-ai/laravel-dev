@@ -55,7 +55,12 @@ class DataTools
         if (str_contains($sql, ';')) {
             throw new RuntimeException('one statement at a time');
         }
-        if (preg_match('/\b(insert|update|delete|drop|alter|truncate|create|grant|revoke|replace|merge|call|lock|into\s+outfile|pg_sleep|sleep\s*\()/i', $sql)) {
+        // statements that write, and functions that write, read server files, reach other servers or stop other work.
+        // Words inside quoted text and quoted names are not code, so they are left out of the check; that is only safe
+        // where every database reads the quotes the same way, so a query with a backslash, a $ or a comment is checked
+        // whole.
+        $code = preg_match('/[\\\\$#]|--|\/\*/', $sql) ? $sql : preg_replace('/\'[^\']*\'|"[^"]*"|`[^`]*`/', "''", $sql);
+        if (preg_match('/\b(insert|update|delete|drop|alter|truncate|create|grant|revoke|replace|merge|call|lock|into|copy|attach|detach|pragma|vacuum|reindex|handler|load_file|dumpfile|benchmark|get_lock|dblink\w*|lo_\w+|pg_read\w*|pg_ls_dir|pg_stat_file|pg_terminate_backend|pg_cancel_backend|pg_sleep\w*|pg_advisory\w*|set_config|setval|nextval|sleep)\b/i', $code)) {
             throw new RuntimeException('this query contains a statement that changes data or the server; only plain reads run here');
         }
         $limit = max(1, min(200, (int) ($input['limit'] ?? 50)));
@@ -63,7 +68,33 @@ class DataTools
         $connection = DB::connection();
         $driver = $connection->getDriverName();
         $started = microtime(true);
-        $rows = $connection->transaction(function () use ($connection, $driver, $sql, $bindings, $limit) {
+        // the database itself refuses writes where it can: MySQL and MariaDB for the next transaction, SQLite for the connection
+        if ($driver === 'mysql' || $driver === 'mariadb') {
+            $connection->statement('SET TRANSACTION READ ONLY');
+        } elseif ($driver === 'sqlite') {
+            $connection->statement('PRAGMA query_only = ON');
+        }
+        try {
+            $rows = self::read($connection, $driver, $sql, $bindings, $limit);
+        } finally {
+            if ($driver === 'sqlite') {
+                $connection->statement('PRAGMA query_only = OFF');
+            }
+        }
+        $more = count($rows) > $limit;
+
+        return [
+            'rows' => array_slice(array_map(fn ($r) => (array) $r, $rows), 0, $limit),
+            'returned' => min(count($rows), $limit),
+            'more' => $more,
+            'ms' => (int) round((microtime(true) - $started) * 1000),
+        ];
+    }
+
+    /** The query inside one transaction, with the database's own limits on time and writes. */
+    private static function read($connection, string $driver, string $sql, array $bindings, int $limit): array
+    {
+        return $connection->transaction(function () use ($connection, $driver, $sql, $bindings, $limit) {
             // the database itself refuses writes inside this transaction where it can
             if ($driver === 'pgsql') {
                 $connection->statement('SET TRANSACTION READ ONLY');
@@ -77,13 +108,5 @@ class DataTools
 
             return $connection->select($wrapped, $bindings);
         });
-        $more = count($rows) > $limit;
-
-        return [
-            'rows' => array_slice(array_map(fn ($r) => (array) $r, $rows), 0, $limit),
-            'returned' => min(count($rows), $limit),
-            'more' => $more,
-            'ms' => (int) round((microtime(true) - $started) * 1000),
-        ];
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rekhu\LaravelDev\Tests\Feature;
 
+use Rekhu\LaravelDev\Rekhu;
 use Rekhu\LaravelDev\Tests\TestCase;
 
 class RunRouteTest extends TestCase
@@ -52,7 +53,7 @@ class RunRouteTest extends TestCase
         $this->withHeaders($headers)->postJson('/rekhu/run', $body)
             ->assertOk()
             ->assertHeader('Cache-Control', 'no-store, private')
-            ->assertJsonPath('result.error', 'this app has no tool "no-such-tool" (rekhu/laravel-dev 1.0.0)');
+            ->assertJsonPath('result.error', 'this app has no tool "no-such-tool" (rekhu/laravel-dev '.Rekhu::VERSION.')');
 
         $this->withHeaders($headers)->postJson('/rekhu/run', $body)->assertStatus(409)->assertJson(['message' => 'this call was already made once']);
     }
@@ -61,7 +62,7 @@ class RunRouteTest extends TestCase
     {
         $this->connect();
         $this->withHeaders($this->signed('GET', '/rekhu/ping'))->get('/rekhu/ping')
-            ->assertOk()->assertJson(['ok' => true, 'package' => '1.0.0']);
+            ->assertOk()->assertJson(['ok' => true, 'package' => Rekhu::VERSION]);
         $this->withHeaders($this->signed('GET', '/rekhu/run'))->get('/rekhu/ping')->assertStatus(401);
     }
 }

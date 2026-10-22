@@ -2,10 +2,12 @@
 
 namespace Rekhu\LaravelDev\Support;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use Rekhu\LaravelDev\Rekhu;
 use RuntimeException;
+use Throwable;
 
 /**
  * Where the agent's changes go and how they are undone. Every run that writes gets a record in
@@ -117,12 +119,32 @@ class Workspace
         self::save($record);
     }
 
+    /** True when the latest migrations in the database are exactly these. */
+    private static function stillLatest(array $names): bool
+    {
+        $table = config('database.migrations');
+        $table = is_array($table) ? ($table['table'] ?? 'migrations') : ($table ?: 'migrations');
+        try {
+            $latest = DB::table($table)->orderByDesc('batch')->orderByDesc('migration')->limit(count($names))->pluck('migration')->all();
+        } catch (Throwable) {
+            return false;
+        }
+        sort($latest);
+        sort($names);
+
+        return $latest === $names;
+    }
+
     /** Puts everything the run changed back: files restored, created files removed, its migrations rolled back, the branch left. */
     public static function rollback(string $run): array
     {
         $record = self::record($run);
         if (! $record['files'] && ! $record['created'] && ! $record['branch']) {
             throw new RuntimeException("there is nothing to undo for run $run");
+        }
+        // the run's migrations are undone only while they are still the latest: otherwise a rollback would undo others
+        if ($record['migrations'] && ! self::stillLatest($record['migrations'])) {
+            throw new RuntimeException('other migrations ran after this run\'s ('.implode(', ', $record['migrations']).'); undo them by hand with a new migration, or roll back in order with php artisan migrate:rollback');
         }
         $done = ['restored' => [], 'removed' => [], 'migrations' => null, 'branch' => null];
         if ($record['migrations']) {

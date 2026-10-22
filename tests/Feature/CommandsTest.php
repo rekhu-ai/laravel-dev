@@ -7,6 +7,7 @@ namespace Rekhu\LaravelDev\Tests\Feature;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Rekhu\LaravelDev\Rekhu;
 use Rekhu\LaravelDev\Tests\TestCase;
 
 class CommandsTest extends TestCase
@@ -130,6 +131,6 @@ class CommandsTest extends TestCase
             ->assertSuccessful();
 
         Http::assertSent(fn (Request $request) => str_ends_with($request->url(), '/v1/relay/41/result')
-            && $request['result'] === ['error' => 'this app has no tool "no-such-tool" (rekhu/laravel-dev 1.0.0)']);
+            && $request['result'] === ['error' => 'this app has no tool "no-such-tool" (rekhu/laravel-dev '.Rekhu::VERSION.')']);
     }
 }

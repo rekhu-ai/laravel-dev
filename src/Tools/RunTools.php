@@ -13,7 +13,8 @@ use RuntimeException;
 /** Commands in the app: git, artisan, migrations, tests and composer, each within its limits. */
 class RunTools
 {
-    private const READ_ONLY_ARTISAN = ['about', 'route:list', 'schedule:list', 'migrate:status', 'model:show', 'db:show', 'db:table', 'event:list', 'config:show', 'list', 'env', 'queue:failed', 'queue:monitor', 'channel:list', 'package:discover --dry-run'];
+    // config:show is left out: it prints secrets unmasked, and the config tool shows the same values masked
+    private const READ_ONLY_ARTISAN = ['about', 'route:list', 'schedule:list', 'migrate:status', 'model:show', 'db:show', 'db:table', 'event:list', 'list', 'env', 'queue:failed', 'queue:monitor', 'channel:list'];
 
     private const NEVER = ['migrate:fresh', 'migrate:reset', 'migrate:refresh', 'db:wipe', 'db:seed --force', 'key:generate', 'down', 'tinker', 'serve', 'rekhu:', 'env:decrypt', 'env:encrypt', 'schedule:work', 'queue:work', 'queue:listen', 'queue:flush', 'queue:clear', 'horizon', 'octane'];
 
@@ -133,6 +134,10 @@ class RunTools
         if (! is_dir(base_path('tests'))) {
             return ['tests' => 'this app has no tests folder'];
         }
+        // a test suite may refresh or seed the database it is pointed at, which on a live server is the live one
+        if (Rekhu::environment() === 'production') {
+            throw new RuntimeException('tests are not run on production: they can reset or fill the database they reach. Run them locally or on staging.');
+        }
         $args = ['test', '--compact'];
         if (! empty($input['filter'])) {
             $args[] = '--filter='.preg_replace('/[^\w\\\\:. -]/', '', (string) $input['filter']);
@@ -176,6 +181,13 @@ class RunTools
     public static function rollback(array $input, array $meta): array
     {
         $run = Workspace::runId($input['run'] ?? $meta['run']);
+        // undoing changes the app as much as making them: the same write rule applies
+        if (Rekhu::writes() === 'off') {
+            throw new RuntimeException('writing is off for this app ('.Rekhu::environment().'), so the agent does not undo runs here either; the developer can run php artisan rekhu:rollback '.$run);
+        }
+        if (Rekhu::environment() !== 'local' && ($input['confirmed'] ?? false) !== true) {
+            return ['confirmation_needed' => 'Undoing run '.$run.' changes the '.Rekhu::environment().' app. Tell the developer exactly what will be undone, wait for a yes, then call again with confirmed true.'];
+        }
 
         return ['run' => $run] + Workspace::rollback($run);
     }

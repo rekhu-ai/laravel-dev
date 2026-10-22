@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rekhu\LaravelDev\Tests\Feature;
 
+use Rekhu\LaravelDev\Rekhu;
 use Rekhu\LaravelDev\Tests\TestCase;
 use Rekhu\LaravelDev\Tools\Registry;
 
@@ -35,7 +36,7 @@ class RegistryTest extends TestCase
 
     public function test_an_unknown_tool_answers_with_an_error_and_never_throws(): void
     {
-        $this->assertSame(['error' => 'this app has no tool "drop-everything" (rekhu/laravel-dev 1.0.0)'], Registry::run('drop-everything', []));
+        $this->assertSame(['error' => 'this app has no tool "drop-everything" (rekhu/laravel-dev '.Rekhu::VERSION.')'], Registry::run('drop-everything', []));
     }
 
     public function test_a_destructive_step_outside_local_waits_for_the_developer(): void
