@@ -80,5 +80,5 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Licence
 
-Licensed, not sold: see LICENSE.txt. Rekhu is a product and trade name of Charisma Design, the Netherlands.
+Licensed, not sold: see LICENSE.txt.
 Questions: hello@rekhu.com
