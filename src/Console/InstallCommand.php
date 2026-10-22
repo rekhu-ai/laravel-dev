@@ -3,6 +3,7 @@
 namespace Rekhu\LaravelDev\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\Str;
 use Rekhu\LaravelDev\Rekhu;
 use Rekhu\LaravelDev\Support\Platform;
@@ -18,9 +19,9 @@ class InstallCommand extends Command
     {
         $this->line('');
         $this->line('  <fg=magenta>rekhu</> · Rekhu Builder for Laravel '.Rekhu::VERSION);
-        $this->line('  Make a key in your account: Projects → New project → Laravel app; it shows on the Connection tab.');
+        $this->line('  Make a key in your account: on the Connection tab of the project, Rekhu Builder card → Make a key.');
         $this->line('');
-        $key = trim((string) ($this->option('key') ?: $this->secret('Site key (agk_…)')));
+        $key = trim((string) ($this->option('key') ?: $this->secret('Builder key (agk_…)')));
         if (! preg_match('/^agk_([a-z0-9-]+)_([a-z0-9-]+)_[A-Za-z0-9_-]+$/', $key)) {
             $this->error('That is not a Rekhu site key. Copy it again from the account.');
 
@@ -49,7 +50,7 @@ class InstallCommand extends Command
         $this->line('  Environment: '.Rekhu::environment().' · writes: '.Rekhu::writes().' · connection: '.Rekhu::mode());
 
         if (Rekhu::mode() === 'relay') {
-            if (! class_exists(\Illuminate\Foundation\DevCommands::class)) {
+            if (! class_exists(DevCommands::class)) {
                 $this->addToDevScript();   // Laravel 11 and 12; Laravel 13 registers the listener with php artisan dev itself
             }
             $this->line('');

@@ -4,6 +4,7 @@ namespace Rekhu\LaravelDev\Tools;
 
 use Rekhu\LaravelDev\Rekhu;
 use Rekhu\LaravelDev\Support\Guard;
+use Rekhu\LaravelDev\Support\Workspace;
 use Throwable;
 
 /**
@@ -77,7 +78,7 @@ class Registry
             if ($destructive && Rekhu::environment() !== 'local' && ($input['confirmed'] ?? false) !== true && ! ($tool === 'migrate' && ($input['pretend'] ?? true))) {
                 return ['confirmation_needed' => 'This step changes the '.Rekhu::environment().' app. Tell the developer exactly what will happen, wait for a yes, then call again with confirmed true.'];
             }
-            $result = call_user_func($handler, $input, ['run' => \Rekhu\LaravelDev\Support\Workspace::runId($meta['run'] ?? null), 'user' => $meta['user'] ?? null]);
+            $result = call_user_func($handler, $input, ['run' => Workspace::runId($meta['run'] ?? null), 'user' => $meta['user'] ?? null]);
             $json = json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
             if ($json === false || strlen($json) > 900000) {
                 return ['error' => 'the answer is too large to send; narrow it down (a filter, a path, fewer lines)'];

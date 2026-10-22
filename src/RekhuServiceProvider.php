@@ -2,6 +2,7 @@
 
 namespace Rekhu\LaravelDev;
 
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\ServiceProvider;
 use Rekhu\LaravelDev\Console\InstallCommand;
 use Rekhu\LaravelDev\Console\ListenCommand;
@@ -27,8 +28,8 @@ class RekhuServiceProvider extends ServiceProvider
 
             // Laravel 13's php artisan dev (composer run dev) runs the listener next to the server, queue and Vite,
             // so a local app is connected whenever the developer works. Older versions get it through composer.json.
-            if (class_exists(\Illuminate\Foundation\DevCommands::class) && Rekhu::key() && Rekhu::mode() === 'relay') {
-                \Illuminate\Foundation\DevCommands::artisan('rekhu:listen', 'rekhu')->purple();
+            if (class_exists(DevCommands::class) && Rekhu::key() && Rekhu::mode() === 'relay') {
+                DevCommands::artisan('rekhu:listen', 'rekhu')->purple();
             }
         }
     }

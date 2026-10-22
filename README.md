@@ -12,11 +12,17 @@ Laravel 11, 12 or 13, PHP 8.2 or newer.
 
 ## Install
 
+In your Rekhu account open the project of this app, go to the Connection tab and press **Make a key** in the
+Rekhu Builder card. Then, in the app's folder:
+
 ```bash
 composer require rekhu/laravel-dev
-php artisan rekhu:install          # asks for the key from Projects → New project → Laravel app (Connection tab)
+php artisan rekhu:install --key=…  # the builder key of the project; it is shown once
 php artisan rekhu:status
 ```
+
+The builder key is not the assistant's key: the assistant inside your app (`rekhu/assistant-laravel`) has keys of
+its own, one per environment, in the Rekhu Assistant card.
 
 On a laptop, in Docker or behind a firewall keep the listener running:
 
@@ -36,6 +42,10 @@ php artisan rekhu:listen           # on Laravel 13, composer run dev starts it f
 
 `php artisan vendor:publish --tag=rekhu-config` publishes `config/rekhu.php`: the folders the agent may write in,
 extra artisan commands it may run, the connection mode and the write mode. Every value can also be set in `.env`.
+
+## Changes
+
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## Licence
 

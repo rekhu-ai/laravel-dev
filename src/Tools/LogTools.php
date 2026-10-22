@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Schema;
 use Rekhu\LaravelDev\Support\Guard;
+use Rekhu\LaravelDev\Support\Shell;
 use RuntimeException;
 use Throwable;
 
@@ -138,7 +139,7 @@ class LogTools
 
     public static function schedule(array $input = []): array
     {
-        $result = Process::path(base_path())->timeout(60)->env(\Rekhu\LaravelDev\Support\Shell::env())->run([PHP_BINARY, 'artisan', 'schedule:list', '--no-ansi']);
+        $result = Process::path(base_path())->timeout(60)->env(Shell::env())->run([PHP_BINARY, 'artisan', 'schedule:list', '--no-ansi']);
 
         return ['output' => Guard::clip(trim($result->output() ?: $result->errorOutput()), 20000)];
     }

@@ -2,9 +2,11 @@
 
 namespace Rekhu\LaravelDev\Tools;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use Rekhu\LaravelDev\Rekhu;
 use Rekhu\LaravelDev\Support\Guard;
+use Rekhu\LaravelDev\Support\Shell;
 use Rekhu\LaravelDev\Support\Workspace;
 use RuntimeException;
 
@@ -18,7 +20,7 @@ class RunTools
     private static function artisanCall(array $args, int $timeout = 120, bool $flags = true)
     {
         // php artisan test hands every option to PHPUnit or Pest, which do not know --no-interaction
-        return Process::path(base_path())->timeout($timeout)->env(\Rekhu\LaravelDev\Support\Shell::env())->run(array_merge([PHP_BINARY, 'artisan'], $args, $flags ? ['--no-interaction', '--no-ansi'] : []));
+        return Process::path(base_path())->timeout($timeout)->env(Shell::env())->run(array_merge([PHP_BINARY, 'artisan'], $args, $flags ? ['--no-interaction', '--no-ansi'] : []));
     }
 
     public static function git(array $input = []): array
@@ -91,7 +93,7 @@ class RunTools
         $files = [];
         foreach ((array) config('rekhu.writable', []) as $root) {
             if (is_dir(base_path($root))) {
-                foreach (\Illuminate\Support\Facades\File::allFiles(base_path($root)) as $f) {
+                foreach (File::allFiles(base_path($root)) as $f) {
                     if ($f->getMTime() > time() - 600) {
                         $files[] = ltrim(substr($f->getPathname(), strlen(base_path())), '/');
                     }
@@ -165,7 +167,7 @@ class RunTools
             'remove' => [$binary, 'remove', $package, '--no-interaction', '--no-progress'],
             default => throw new RuntimeException('action is require, update or remove'),
         };
-        $result = Process::path(base_path())->timeout(600)->env(\Rekhu\LaravelDev\Support\Shell::env())->run(array_values($args));
+        $result = Process::path(base_path())->timeout(600)->env(Shell::env())->run(array_values($args));
         $commit = $result->successful() ? Workspace::commit($meta['run'], ['composer.json', 'composer.lock'], "composer $action $spec") : null;
 
         return array_filter(['exit' => $result->exitCode(), 'output' => Guard::clip(trim($result->output()."\n".$result->errorOutput()), 40000), 'commit' => $commit, 'run' => $meta['run']], fn ($v) => $v !== null);
