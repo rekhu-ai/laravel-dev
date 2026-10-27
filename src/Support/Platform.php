@@ -19,7 +19,7 @@ class Platform
     {
         $key = Rekhu::key();
         if (! $key) {
-            throw new RuntimeException('REKHU_KEY is missing or not a Rekhu site key. Run php artisan rekhu:install.');
+            throw new RuntimeException('REKHU_KEY is missing or not a Rekhu site key. Run php artisan rekhu:install. No Rekhu account yet? Create one at https://rekhu.com/register?ref=laravel-dev: it starts with $10 credit, no card needed.');
         }
         $host = parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'localhost';
 

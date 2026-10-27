@@ -20,6 +20,7 @@ class InstallCommand extends Command
         $this->line('');
         $this->line('  <fg=magenta>rekhu</> · Rekhu Builder for Laravel '.Rekhu::VERSION);
         $this->line('  Make a key in your account: on the Connection tab of the project, Rekhu Builder card → Make a key.');
+        $this->line('  No Rekhu account yet? Create one at https://rekhu.com/register?ref=laravel-dev: it starts with $10 credit, no card needed.');
         $this->line('');
         $key = trim((string) ($this->option('key') ?: $this->secret('Builder key (agk_…)')));
         if (! preg_match('/^agk_([a-z0-9-]+)_([a-z0-9-]+)_[A-Za-z0-9_-]+$/', $key)) {

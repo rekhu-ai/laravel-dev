@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Process;
  */
 class Rekhu
 {
-    public const VERSION = '1.1.0';
+    public const VERSION = '1.1.1';
 
     /** The key's parts: agk_<customer>_<agent>_<secret>. Null when there is no usable key. */
     public static function key(): ?array

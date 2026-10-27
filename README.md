@@ -4,6 +4,8 @@ The agent that knows your running Laravel app. Install this package, add the key
 [Rekhu](https://rekhu.com) account, and the agent there reads the app as it runs, fixes what breaks on a
 git branch with a test, and keeps an eye on the live site.
 
+> **Start free.** [Create a Rekhu account](https://rekhu.com/register?ref=laravel-dev) and get **$10 credit** to try it, no card needed. After that you top up from $10 under **Billing**: no subscription, and unused credit never expires. [rekhu.com](https://rekhu.com) · [Docs](https://rekhu.com/docs) · [Pricing](https://rekhu.com/pricing)
+
 - Reads: routes, models, the database schema, config (secrets masked), logs, failed jobs, the scheduler, packages and security advisories.
 - Changes, when you allow it: code on a git branch of its own, migrations after a preview, tests, packages. Undo per run.
 - Works on a laptop too: `php artisan rekhu:listen` connects over an outgoing connection, nothing to open inbound.
@@ -17,7 +19,7 @@ git branch with a test, and keeps an eye on the live site.
 
 ## Install
 
-In your Rekhu account open the project of this app, go to the Connection tab and press **Make a key** in the
+[Create a Rekhu account](https://rekhu.com/register?ref=laravel-dev) if you have none: it starts with $10 credit, no card needed. In your Rekhu account open the project of this app, go to the Connection tab and press **Make a key** in the
 Rekhu Builder card. Then, in the app's folder:
 
 ```bash

@@ -2,6 +2,11 @@
 
 All notable changes to `rekhu/laravel-dev`. Versions follow [semantic versioning](https://semver.org).
 
+## 1.1.1 · 27 October 2026
+
+- **Start free.** The README says how to begin: [create a Rekhu account](https://rekhu.com/register?ref=laravel-dev) and it starts with $10 credit, no card needed, with links to the docs and pricing.
+- A missing or wrong key now says where to get one: the message links to sign-up, where a new account starts with $10 credit. `rekhu:install` shows the same line before it asks for the key.
+
 ## 1.1.0 · 22 October 2026
 
 Laravel 10 support, and safety fixes from a review of 1.0.0. Update when you use 1.0.0.
